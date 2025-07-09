@@ -1,0 +1,75 @@
+# ✅ Backend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mern
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mern
+  template:
+    metadata:
+      labels:
+        app: mern
+    spec:
+      containers:
+        - name: mern
+          image: monta2027/mern:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongo:27017/shopping
+
+---
+# ✅ Backend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mern
+spec:
+  selector:
+    app: mern
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
+
+---
+# ✅ Frontend Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mern-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mern-frontend
+  template:
+    metadata:
+      labels:
+        app: mern-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: monta2027/mern-frontend:latest
+          ports:
+            - containerPort: 3000
+
+---
+# ✅ Frontend Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mern-frontend-service
+spec:
+  selector:
+    app: mern-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
