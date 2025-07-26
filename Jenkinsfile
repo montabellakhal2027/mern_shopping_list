@@ -135,15 +135,12 @@ pipeline {
         stage('Kubernetes Deployment') {
             steps {
                 script {
-                    // Verify service.yaml exists
                     if (!fileExists('service.yaml')) {
                         error "service.yaml not found"
                     }
                     
-                    // Apply Kubernetes configuration
                     sh 'kubectl apply -f service.yaml'
                     
-                    // Verify deployment
                     sh '''
                         kubectl rollout status deployment/mern --timeout=2m
                         kubectl get pods -o wide
